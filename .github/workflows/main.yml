@@ -14,7 +14,7 @@ jobs:
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
       - name: Push Mirror
         env:
-          SOURCE_REPO: 'https://github.com/xzd109/mytestcode.git'
+          SOURCE_REPO: 'git@github.com:xzd109/mytestcode.git'
           DESTINATION_REPO: 'git@gitee.com:xzd109/geemytestcode.git'
         run: |
           git clone --mirror "$SOURCE_REPO" && cd `basename "$SOURCE_REPO"`
@@ -22,4 +22,3 @@ jobs:
           git fetch -p origin
           git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin
           git push --mirror
-
