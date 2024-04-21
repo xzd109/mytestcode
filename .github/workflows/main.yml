@@ -24,4 +24,4 @@ jobs:
         # 强制更新
         force_update: true
         # clone方式，使用http、ssh方式进行clone
-        clone_style: "http"
+        #clone_style: "http"
