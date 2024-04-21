@@ -1,24 +1,22 @@
-name: Mirror to Gitee Repo
-on: [ push, delete, create ]
+name: Gitee repos mirror periodic job
+on:
+# 如果需要PR触发把push前的#去掉
+  push:
+#schedule:
+    # 每天北京时间9点跑
+    #- cron:  '0 1 * * *'
 jobs:
-  git-mirror:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure Private Key
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_SSH_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      - name: Push Mirror
-        env:
-          SOURCE_REPO: 'git@github.com:xzd109/mytestcode.git'
-          DESTINATION_REPO: 'git@gitee.com:xzd109/geemytestcode.git'
-        run: |
-          git clone --mirror "$SOURCE_REPO" && cd `basename "$SOURCE_REPO"`
-          git remote set-url --push origin "$DESTINATION_REPO"
-          git fetch -p origin
-          git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin
-          git push --mirror
+    - name: Mirror the Github organization repos to Gitee.
+      uses: xzd109/gitee-mirror-action@v0.01
+      with:
+        # 必选，需要同步的Github用户（源）
+        src: github/xzd109
+        # 必选，需要同步到的Gitee的用户（目的）
+        dst: gitee/xzd109
+        # 必选，Gitee公钥对应的私钥，https://gitee.com/profile/sshkeys
+        dst_key: ${{ secrets.GITEE_PRIVATE_SSH_KEY }}
+        # 必选，Gitee对应的用于创建仓库的token，https://gitee.com/profile/personal_access_tokens
+        dst_token:  ${{ secrets.GITEE_PRIVATE_TOKEN }}
